@@ -35,13 +35,16 @@ class MessengersController {
             
             // Responds with the challenge token from the request
             console.log('WEBHOOK_VERIFIED');
-            res.status(200).send(challenge);
+            return res.status(200).send(challenge);
           
           } else {
             // Responds with '403 Forbidden' if verify tokens do not match
-            res.sendStatus(403);      
+            return res.send(403).json({message: "Not Verify."});   
           }
+        }else{
+            return res.sendStatus(403)
         }
+        
     }
 
     public async create(req: Request, res: Response) {

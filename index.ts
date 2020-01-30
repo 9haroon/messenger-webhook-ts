@@ -6,5 +6,5 @@ const app = new App(
 		MessengerController
 	]
 );
-app.validateEnv();
+
 app.listen();
