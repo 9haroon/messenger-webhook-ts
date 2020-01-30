@@ -2,7 +2,7 @@
   "name": "messenger-webhook",
   "version": "1.0.0",
   "description": "To POC messenger webhook with nodejs",
-  "main": "./index.ts",
+  "main": "./src/index.ts",
   "dependencies": {
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
@@ -17,9 +17,10 @@
     "typescript": "^3.7.5"
   },
   "scripts": {
-    "watch": "ts-node-dev --respawn --transpileOnly ./index.ts",
+    "watch": "ts-node-dev --respawn --transpileOnly ./src/index.ts",
     "start": "npm run serve",
     "serve": "node dist/app.js",
+    "build": "tsc",
     "test": "test"
   },
   "repository": {

@@ -1,5 +1,6 @@
 import express, { Request, Response, Router } from 'express';
 import https from "https";
+import path from "path";
 import { cleanEnv, port, str, CleanEnv } from "envalid";
 import dotenv from "dotenv";
 import fs from "fs";
@@ -24,7 +25,7 @@ class App {
   }
 
   public listen() {
-    if(this.env.isDev) {
+    if(!this.env.isDev) {
       https.createServer(
       {
         key: fs.readFileSync('key.pem'),
@@ -57,7 +58,7 @@ class App {
 
   private initializeControllers(controllers: IController[]) {
     this.app.get('/', (req, res) => {
-        res.send('Hello World');
+        res.send('Hello world');
     });
     controllers.forEach((controller) => {
       this.app.use('/api' + controller.path, controller.router);
@@ -79,6 +80,7 @@ class App {
     this.env = cleanEnv(process.env, {
       NODE_ENV: str(),
       PORT: port(),
+      FACEBOOK_VERIFY_TOKEN: str(),
     });
     if(this.env.isDev) {
       cleanEnv(process.env, {

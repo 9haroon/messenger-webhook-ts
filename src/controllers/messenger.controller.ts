@@ -7,7 +7,7 @@ class MessengersController {
     router: Router;
 
     constructor() {
-        this.path = '/webhook';
+        this.path = '/facebook/webhook';
         this.router = Router();
         this.initRouter();
     }
@@ -20,7 +20,7 @@ class MessengersController {
     public async index(req: Request, res: Response) {
         // Adds support for GET requests to our webhook
         // Your verify token. Should be a random string.
-        let VERIFY_TOKEN = "<YOUR_VERIFY_TOKEN>"
+        let VERIFY_TOKEN = process.env.FACEBOOK_VERIFY_TOKEN;
           
         // Parse the query params
         let mode = req.query['hub.mode'];
@@ -53,14 +53,25 @@ class MessengersController {
 
         // Checks this is an event from a page subscription
         if (body.object === 'page') {
-
+          console.log(body);
           // Iterates over each entry - there may be multiple if batched
-          body.entry.forEach(function(entry) {
+          body.entry.forEach(function(entry: any) {
 
             // Gets the message. entry.messaging is an array, but 
             // will only ever contain one message, so we get index 0
             let webhook_event = entry.messaging[0];
             console.log(webhook_event);
+            // Get the sender PSID
+            let sender_psid = webhook_event.sender.id;
+            console.log('Sender PSID: ' + sender_psid);
+ 
+            // Check if the event is a message or postback and
+            // pass the event to the appropriate handler function
+            if (webhook_event.message) {
+                console.log(webhook_event.message)
+            } else if (webhook_event.postback) {
+                console.log(webhook_event.postback)
+            }
           });
 
           // Returns a '200 OK' response to all requests
