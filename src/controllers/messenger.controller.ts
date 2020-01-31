@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
+import request from "request";
 //import { body } from "express-validator";
 
 class MessengersController {
@@ -53,14 +54,14 @@ class MessengersController {
 
         // Checks this is an event from a page subscription
         if (body.object === 'page') {
-          console.log(body);
+          //console.log(body);
           // Iterates over each entry - there may be multiple if batched
           body.entry.forEach(function(entry: any) {
 
             // Gets the message. entry.messaging is an array, but 
             // will only ever contain one message, so we get index 0
             let webhook_event = entry.messaging[0];
-            console.log(webhook_event);
+            //console.log(webhook_event);
             // Get the sender PSID
             let sender_psid = webhook_event.sender.id;
             console.log('Sender PSID: ' + sender_psid);
@@ -68,9 +69,10 @@ class MessengersController {
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
             if (webhook_event.message) {
-                console.log(webhook_event.message)
+                console.log('message', webhook_event.message);
+                //MessengerController.callSendAPI(sender_psid, "Got it dude");
             } else if (webhook_event.postback) {
-                console.log(webhook_event.postback)
+                console.log('postback', webhook_event.postback);
             }
           });
 
@@ -90,6 +92,34 @@ class MessengersController {
 
     public async patch(req: Request, res: Response) {
 
+    }
+
+    // Sends response messages via the Send API
+    callSendAPI = (recipient_psid: string, responseMsg: string, cb:any = null) => {
+        // Construct the message body
+        let request_body = {
+            "recipient": {
+                "id": recipient_psid
+            },
+            "message": {text: responseMsg}
+        };
+     
+        // Send the HTTP request to the Messenger Platform
+        request({
+            "uri": "https://graph.facebook.com/v5.0/me/messages",
+            "qs": { "access_token": process.env.FACEBOOK_PAGE_TOKEN },
+            "method": "POST",
+            "json": request_body
+        }, (err, res, body) => {
+            if (!err) {
+                console.log('body', body)
+                if(cb){
+                    cb();
+                }
+            } else {
+                console.error("Unable to send message:" + err);
+            }
+        });
     }
 }
 
