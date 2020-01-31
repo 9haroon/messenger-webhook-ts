@@ -81,6 +81,7 @@ class App {
       NODE_ENV: str(),
       PORT: port(),
       FACEBOOK_VERIFY_TOKEN: str(),
+      LINE_CHANNEL_SECRET: str()
     });
     if(this.env.isDev) {
       cleanEnv(process.env, {
